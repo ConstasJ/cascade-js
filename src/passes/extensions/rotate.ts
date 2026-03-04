@@ -1,0 +1,11 @@
+import type { Pass, PipelineContext } from '../../types.js';
+
+export const rotatePass: Pass = {
+  name: 'rotate',
+  
+  transform(ast, context: PipelineContext) {
+    // TODO: Implement rotate function deobfuscation
+    context.logger.debug('Rotate pass: not implemented');
+    return ast;
+  },
+};

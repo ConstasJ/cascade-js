@@ -24,12 +24,12 @@ export class MockLLMAdapter extends BaseLLMAdapter {
       const code = stmt.code.toLowerCase();
 
       // Detect string array: var _0x... = [...]
-      if (/var\s+_0x[a-f0-9]+\s*=\s*\[/.test(stmt.code)) {
+      if (/var\s+_0x\w+\s*=\s*\[/.test(stmt.code)) {
         stringArrayId = stmt.id;
       }
 
       // Detect string fetcher: function _0x...(x, y) { ... }
-      if (/function\s+_0x[a-f0-9]+\s*\([^)]*\)/.test(stmt.code) && 
+      if (/function\s+_0x\w+\s*\([^)]*\)/.test(stmt.code) &&
           stmt.code.includes('return')) {
         stringFetcherId = stmt.id;
       }

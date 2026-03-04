@@ -40,10 +40,14 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@babel/generator": "^7.29.1",
     "@babel/parser": "^7.29.0",
     "@babel/traverse": "^7.29.0",
     "@babel/types": "^7.29.0",
+    "@google/generative-ai": "^0.24.1",
+    "ollama": "^0.6.3",
+    "openai": "^6.25.0",
     "quickjs-emscripten": "^0.32.0"
   }
 }
