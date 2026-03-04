@@ -68,7 +68,7 @@ describe('CLI', () => {
       const command = `echo "${inputCode}" | node ${cliPath} - --provider ollama --timeout 5000`;
 
       try {
-        const output = execSync(command, { cwd: __dirname, encoding: 'utf-8', shell: true });
+        const output = execSync(command, { cwd: __dirname, encoding: 'utf-8' });
         expect(typeof output).toBe('string');
       } catch (error) {
         // Ollama may not be available, but CLI should handle it
