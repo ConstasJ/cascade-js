@@ -13,11 +13,13 @@ export class GeminiLLMAdapter extends BaseLLMAdapter {
   readonly name = 'gemini';
   private client: GoogleGenerativeAI;
   private model: string;
+  private baseUrl: string | undefined;
   
-  constructor(apiKey: string, model = 'gemini-1.5-flash') {
+  constructor(apiKey: string, model = 'gemini-1.5-flash', baseURL?: string) {
     super();
     this.client = new GoogleGenerativeAI(apiKey);
     this.model = model;
+    this.baseUrl = baseURL;
   }
   
   async detectPrelude(
@@ -27,7 +29,8 @@ export class GeminiLLMAdapter extends BaseLLMAdapter {
     const prompt = this.buildPrompt(statements);
     const modelToUse = options?.model || this.model;
     
-    const generativeModel = this.client.getGenerativeModel({ model: modelToUse });
+    const requestOptions = this.baseUrl ? { baseUrl: this.baseUrl } : {};
+    const generativeModel = this.client.getGenerativeModel({ model: modelToUse }, requestOptions);
     
     const result = await generativeModel.generateContent({
       contents: [

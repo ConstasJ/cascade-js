@@ -14,9 +14,9 @@ export class OpenAILLMAdapter extends BaseLLMAdapter {
   private client: OpenAI;
   private model: string;
 
-  constructor(apiKey: string, model = 'gpt-4o-mini') {
+  constructor(apiKey: string, model = 'gpt-4o-mini', baseURL?: string) {
     super();
-    this.client = new OpenAI({ apiKey });
+    this.client = new OpenAI({ apiKey, ...(baseURL ? { baseURL } : {}) });
     this.model = model;
   }
 

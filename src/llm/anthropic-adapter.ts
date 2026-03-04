@@ -14,9 +14,9 @@ export class AnthropicLLMAdapter extends BaseLLMAdapter {
   private client: Anthropic;
   private model: string;
 
-  constructor(apiKey: string, model = 'claude-3-haiku-20240307') {
+  constructor(apiKey: string, model = 'claude-3-haiku-20240307', baseURL?: string) {
     super();
-    this.client = new Anthropic({ apiKey });
+    this.client = new Anthropic({ apiKey, ...(baseURL ? { baseURL } : {}) });
     this.model = model;
   }
 
