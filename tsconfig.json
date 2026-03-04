@@ -7,9 +7,9 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "commonjs",
-    "target": "es2020",
-    "types": [],
+    "module": "nodenext",
+    "target": "es2022",
+    "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -25,6 +25,7 @@
     "exactOptionalPropertyTypes": true,
 
     "esModuleInterop": true,
+    "moduleResolution": "nodenext",
 
     // Style Options
     // "noImplicitReturns": true,
@@ -36,11 +37,17 @@
 
     // Recommended Options
     "strict": true,
-    "jsx": "react-jsx",
+
     "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tsup.config.ts",
+    "vitest.config.ts"
+  ]
 }
