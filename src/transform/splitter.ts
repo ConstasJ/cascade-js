@@ -1,5 +1,4 @@
 import { parse } from '@babel/parser';
-import traverse from '@babel/traverse';
 import type * as babel from '@babel/types';
 import type { TaggedStatement } from '../types.js';
 
@@ -28,7 +27,7 @@ export function parseAndTag(code: string): SplitResult {
   let id = 0;
 
   // Traverse the AST and collect top-level statements
-  if (ast.program && ast.program.body) {
+  if (ast.program?.body) {
     for (const node of ast.program.body) {
       const start = node.start ?? 0;
       const end = node.end ?? code.length;

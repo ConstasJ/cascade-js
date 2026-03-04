@@ -17,13 +17,18 @@ export {
 } from './pipeline/pipeline.js';
 
 // Pass types
-export { type Pass } from './pipeline/pass.js';
+export { definePass, type Pass, type PassConfig } from './pipeline/pass.js';
 
 // All passes
 export { stringReplacementPass } from './passes/string-replacement.js';
 export { constantPropagationPass } from './passes/constant-propagation.js';
 export { inliningPass } from './passes/inlining.js';
 export { cleanupPass } from './passes/cleanup.js';
+
+// Extension passes (optional, not enabled by default)
+export { booleanLiteralsPass } from './transform/extensions/boolean-literals.js';
+export { controlFlowFlatteningPass } from './transform/extensions/control-flow-flattening.js';
+export { deadCodeRemovalPass } from './transform/extensions/dead-code-removal.js';
 
 // LLM adapters
 export {

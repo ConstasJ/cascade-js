@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import * as babel from '@babel/types';
+import type * as babel from '@babel/types';
 
 // ============================================================================
 // Core Types

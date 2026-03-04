@@ -1,12 +1,5 @@
-import { BaseLLMAdapter, type LLMResponse } from './adapter.js';
+import { BaseLLMAdapter } from './adapter.js';
 import type { TaggedStatement, PreludeDetectionResult, LLMOptions } from '../types.js';
-import { z } from 'zod';
-
-const PreludeDetectionResponseSchema = z.object({
-  stringArrayId: z.number().nullable(),
-  stringFetcherId: z.number().nullable(),
-  rotateId: z.number().nullable(),
-});
 
 export class MockLLMAdapter extends BaseLLMAdapter {
   readonly name = 'mock';
