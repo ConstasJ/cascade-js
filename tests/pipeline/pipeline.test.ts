@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createPipeline } from '../../src/pipeline/pipeline.js';
 import { definePass } from '../../src/pipeline/pass.js';
-import type { Pass, PipelineContext } from '../../src/pipeline/pipeline.js';
+import type { PipelineContext } from '../../src/pipeline/pipeline.js';
 
 describe('Pipeline', () => {
   it('empty pipeline returns code unchanged', async () => {

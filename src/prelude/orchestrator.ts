@@ -1,7 +1,7 @@
 import { parseAndTag } from '../transform/splitter.js';
 import { MockLLMAdapter } from '../llm/mock-adapter.js';
 import { extractStringsFromPrelude } from '../sandbox/executor.js';
-import type { PreludeDetectionResult, TaggedStatement, LLMAdapter } from '../types.js';
+import type { PreludeDetectionResult, LLMAdapter } from '../types.js';
 
 /**
  * Options for configuring the PreludeOrchestrator

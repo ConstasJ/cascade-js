@@ -17,7 +17,7 @@ describe('CASCADE End-to-End Integration', () => {
     const originalPath = join(SAMPLES_DIR, 'hello-world.js');
     
     const obfuscatedCode = readFileSync(obfuscatedPath, 'utf-8');
-    const originalCode = readFileSync(originalPath, 'utf-8').trim();
+    const _originalCode = readFileSync(originalPath, 'utf-8').trim();
     
     // Verify input is actually obfuscated
     const detection = detectObfuscation(obfuscatedCode);

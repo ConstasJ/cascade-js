@@ -1,4 +1,4 @@
-import { getQuickJS, type QuickJSContext, type QuickJSWASMModule } from 'quickjs-emscripten';
+import { getQuickJS, type QuickJSWASMModule } from 'quickjs-emscripten';
 import type { SandboxResult, SandboxOptions } from '../types.js';
 
 let quickjsInstance: QuickJSWASMModule | null = null;

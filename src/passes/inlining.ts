@@ -161,17 +161,17 @@ export const inliningPass: ASTPass = {
         if (paramNames.length !== params.length) return;
         
         const bodySize = countStatements(
-          t.isBlockStatement(body) ? body : body as t.Expression
+          t.isBlockStatement(body) ? body : body
         );
         const isPure = isFunctionBodyPure(
-          t.isBlockStatement(body) ? body : body as t.Expression
+          t.isBlockStatement(body) ? body : body
         );
         
         functions.set(id.name, {
           node: path.node,
           id: id.name,
           paramNames,
-          body: t.isBlockStatement(body) ? body : body as t.Expression,
+          body: t.isBlockStatement(body) ? body : body,
           callCount: 0,
           bodySize,
           isPure,

@@ -9,7 +9,6 @@ import {
   LLMOptionsSchema,
   TaggedStatementSchema,
   PreludeTemplate,
-  AbstractValue,
 } from '../src/types';
 
 // ============================================================================
