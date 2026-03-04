@@ -198,4 +198,70 @@ describe('AnthropicLLMAdapter', () => {
       })
     );
   });
+
+  it('should pass custom baseURL to Anthropic client', async () => {
+    const mockResponse = {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({
+            stringArrayId: null,
+            stringFetcherId: null,
+            rotateId: null,
+          }),
+        },
+      ],
+    };
+
+    const mockCreate = vi.fn().mockResolvedValue(mockResponse);
+    const constructorSpy = vi.fn();
+    (Anthropic as any).mockImplementation(function (this: any, opts: any) {
+      constructorSpy(opts);
+      this.messages = {
+        create: mockCreate,
+      };
+    });
+
+    const customBaseURL = 'https://custom-api.example.com/v1';
+    adapter = new AnthropicLLMAdapter('test-api-key', 'claude-3-haiku-20240307', customBaseURL);
+    await adapter.detectPrelude(mockStatements);
+
+    expect(constructorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        apiKey: 'test-api-key',
+        baseURL: customBaseURL,
+      })
+    );
+  });
+
+  it('should not include baseURL in Anthropic client when not provided', async () => {
+    const mockResponse = {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({
+            stringArrayId: null,
+            stringFetcherId: null,
+            rotateId: null,
+          }),
+        },
+      ],
+    };
+
+    const mockCreate = vi.fn().mockResolvedValue(mockResponse);
+    const constructorSpy = vi.fn();
+    (Anthropic as any).mockImplementation(function (this: any, opts: any) {
+      constructorSpy(opts);
+      this.messages = {
+        create: mockCreate,
+      };
+    });
+
+    adapter = new AnthropicLLMAdapter('test-api-key');
+    await adapter.detectPrelude(mockStatements);
+
+    const calledWith = constructorSpy.mock.calls[0][0];
+    expect(calledWith).toEqual({ apiKey: 'test-api-key' });
+    expect(calledWith).not.toHaveProperty('baseURL');
+  });
 });

@@ -180,6 +180,19 @@ describe('CLI', () => {
         expect(error).toBeDefined();
       }
     });
+
+    it('should accept --base-url option', () => {
+      const inputFile = path.join(tmpDir, 'input.js');
+      fs.writeFileSync(inputFile, 'var f = 6;', 'utf-8');
+
+      const command = `node ${cliPath} ${inputFile} --provider ollama --base-url http://localhost:9999 --timeout 5000`;
+
+      try {
+        execSync(command, { cwd: __dirname, stdio: 'pipe' });
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
   });
 
   describe('Environment variables', () => {

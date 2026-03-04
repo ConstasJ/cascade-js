@@ -194,4 +194,76 @@ describe('OpenAILLMAdapter', () => {
       })
     );
   });
+
+  it('should pass custom baseURL to OpenAI client', async () => {
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              stringArrayId: null,
+              stringFetcherId: null,
+              rotateId: null,
+            }),
+          },
+        },
+      ],
+    };
+
+    const mockCreate = vi.fn().mockResolvedValue(mockResponse);
+    const constructorSpy = vi.fn();
+    (OpenAI as any).mockImplementation(function (this: any, opts: any) {
+      constructorSpy(opts);
+      this.chat = {
+        completions: {
+          create: mockCreate,
+        },
+      };
+    });
+
+    const customBaseURL = 'https://custom-api.example.com/v1';
+    adapter = new OpenAILLMAdapter('test-api-key', 'gpt-4o-mini', customBaseURL);
+    await adapter.detectPrelude(mockStatements);
+
+    expect(constructorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        apiKey: 'test-api-key',
+        baseURL: customBaseURL,
+      })
+    );
+  });
+
+  it('should not include baseURL in OpenAI client when not provided', async () => {
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              stringArrayId: null,
+              stringFetcherId: null,
+              rotateId: null,
+            }),
+          },
+        },
+      ],
+    };
+
+    const mockCreate = vi.fn().mockResolvedValue(mockResponse);
+    const constructorSpy = vi.fn();
+    (OpenAI as any).mockImplementation(function (this: any, opts: any) {
+      constructorSpy(opts);
+      this.chat = {
+        completions: {
+          create: mockCreate,
+        },
+      };
+    });
+
+    adapter = new OpenAILLMAdapter('test-api-key');
+    await adapter.detectPrelude(mockStatements);
+
+    const calledWith = constructorSpy.mock.calls[0][0];
+    expect(calledWith).toEqual({ apiKey: 'test-api-key' });
+    expect(calledWith).not.toHaveProperty('baseURL');
+  });
 });

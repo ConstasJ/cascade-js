@@ -70,7 +70,7 @@ describe('GeminiLLMAdapter', () => {
     expect(result.rotateId).toBe(null);
     expect(result.raw).toEqual(mockResponse);
 
-    expect(mockGetGenerativeModel).toHaveBeenCalledWith({ model: 'gemini-1.5-flash' });
+    expect(mockGetGenerativeModel).toHaveBeenCalledWith({ model: 'gemini-1.5-flash' }, {});
     expect(mockGenerateContent).toHaveBeenCalledWith(
       expect.objectContaining({
         contents: expect.arrayContaining([
@@ -201,6 +201,65 @@ describe('GeminiLLMAdapter', () => {
     adapter = new GeminiLLMAdapter('test-api-key');
     await adapter.detectPrelude(mockStatements, { model: 'gemini-1.5-pro' });
 
-    expect(mockGetGenerativeModel).toHaveBeenCalledWith({ model: 'gemini-1.5-pro' });
+    expect(mockGetGenerativeModel).toHaveBeenCalledWith({ model: 'gemini-1.5-pro' }, {});
+  });
+
+  it('should pass custom baseURL as requestOptions to getGenerativeModel', async () => {
+    const mockResponse = {
+      response: {
+        text: () => JSON.stringify({
+          stringArrayId: null,
+          stringFetcherId: null,
+          rotateId: null,
+        }),
+      },
+    };
+
+    const mockGenerateContent = vi.fn().mockResolvedValue(mockResponse);
+    const mockGetGenerativeModel = vi.fn().mockReturnValue({
+      generateContent: mockGenerateContent,
+    });
+
+    (GoogleGenerativeAI as any).mockImplementation(function(this: any) {
+      this.getGenerativeModel = mockGetGenerativeModel;
+    });
+
+    const customBaseURL = 'https://custom-api.example.com/v1';
+    adapter = new GeminiLLMAdapter('test-api-key', 'gemini-1.5-flash', customBaseURL);
+    await adapter.detectPrelude(mockStatements);
+
+    expect(mockGetGenerativeModel).toHaveBeenCalledWith(
+      { model: 'gemini-1.5-flash' },
+      { baseUrl: customBaseURL }
+    );
+  });
+
+  it('should pass empty requestOptions when baseURL is not provided', async () => {
+    const mockResponse = {
+      response: {
+        text: () => JSON.stringify({
+          stringArrayId: null,
+          stringFetcherId: null,
+          rotateId: null,
+        }),
+      },
+    };
+
+    const mockGenerateContent = vi.fn().mockResolvedValue(mockResponse);
+    const mockGetGenerativeModel = vi.fn().mockReturnValue({
+      generateContent: mockGenerateContent,
+    });
+
+    (GoogleGenerativeAI as any).mockImplementation(function(this: any) {
+      this.getGenerativeModel = mockGetGenerativeModel;
+    });
+
+    adapter = new GeminiLLMAdapter('test-api-key');
+    await adapter.detectPrelude(mockStatements);
+
+    expect(mockGetGenerativeModel).toHaveBeenCalledWith(
+      { model: 'gemini-1.5-flash' },
+      {}
+    );
   });
 });
