@@ -107,11 +107,11 @@ async function generateFixtures() {
       const obfuscated = JavaScriptObfuscator.obfuscate(source.content, config);
       const outputName = `${source.name}.obfuscated.${level}.js`;
       writeFileSync(join(SAMPLES_DIR, outputName), obfuscated.getObfuscatedCode());
-      console.log(`Generated: ${outputName}`);
+      console.warn(`Generated: ${outputName}`);
     }
   }
 
-  console.log('\nAll fixtures generated successfully!');
+  console.warn('\nAll fixtures generated successfully!');
 }
 
 generateFixtures().catch(console.error);
