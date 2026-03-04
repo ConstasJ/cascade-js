@@ -22,6 +22,7 @@ interface CLIOptions {
   provider: string;
   model: string;
   apiKey?: string;
+  baseUrl?: string;
   timeout: string;
   verbose: boolean;
   quiet: boolean;
@@ -32,16 +33,16 @@ interface CLIOptions {
 /**
  * Create an LLM adapter based on provider and model
  */
-function createAdapter(provider: string, model: string, apiKey: string): LLMAdapter {
+function createAdapter(provider: string, model: string, apiKey: string, baseURL?: string): LLMAdapter {
   switch (provider.toLowerCase()) {
     case 'openai':
-      return new OpenAILLMAdapter(apiKey, model);
+      return new OpenAILLMAdapter(apiKey, model, baseURL);
     case 'anthropic':
-      return new AnthropicLLMAdapter(apiKey, model);
+      return new AnthropicLLMAdapter(apiKey, model, baseURL);
     case 'gemini':
-      return new GeminiLLMAdapter(apiKey, model);
+      return new GeminiLLMAdapter(apiKey, model, baseURL);
     case 'ollama':
-      return new OllamaLLMAdapter(model);
+      return new OllamaLLMAdapter(model, baseURL);
     default:
       throw new Error(`Unknown provider: ${provider}`);
   }
@@ -160,6 +161,7 @@ async function main(): Promise<void> {
     .option('--quiet', 'Suppress all output except the result')
     .option('--no-prefilter', 'Skip obfuscation detection')
     .option('--json', 'Output result as JSON instead of plain code')
+    .option('--base-url <url>', 'Custom base URL for the LLM provider API endpoint')
     .action(async (input: string | undefined, output: string | undefined, options: CLIOptions) => {
       try {
         // Get API key from option or environment variable
@@ -184,7 +186,7 @@ async function main(): Promise<void> {
         const inputCode = await readInput(input);
 
         // Create adapter
-        const adapter = createAdapter(options.provider, options.model, apiKey || '');
+        const adapter = createAdapter(options.provider, options.model, apiKey || '', options.baseUrl);
 
         // Prepare deobfuscate options
         const deobfuscateOptions: DeobfuscateOptions = {
