@@ -9,6 +9,21 @@ import { PreludeOrchestrator } from '../prelude/orchestrator.js';
 import { stringReplacementPass } from '../passes/string-replacement.js';
 import { constantPropagationPass } from '../passes/constant-propagation.js';
 
+// Extension passes for full deobfuscation
+import { stringArrayPass } from '../passes/extensions/string-array.js';
+import { booleanLiteralsPass } from '../transform/extensions/boolean-literals.js';
+import { controlFlowFlatteningPass } from '../transform/extensions/control-flow-flattening.js';
+import { deadCodeRemovalPass } from '../transform/extensions/dead-code-removal.js';
+import { splitStringsPass } from '../transform/extensions/split-strings.js';
+import { unicodeEscapePass } from '../transform/extensions/unicode-escape.js';
+import { numbersToExpressionsPass } from '../transform/extensions/numbers-to-expressions.js';
+import { objectKeysPass } from '../transform/extensions/object-keys.js';
+import { selfDefendingPass } from '../transform/extensions/self-defending.js';
+import { debugProtectionPass } from '../transform/extensions/debug-protection.js';
+import { consoleOutputPass } from '../transform/extensions/console-output.js';
+import { domainLockPass } from '../transform/extensions/domain-lock.js';
+import { unminifyPass } from '../transform/extensions/unminify.js';
+
 /**
  * Context shared across all passes in a pipeline execution
  */
@@ -255,10 +270,30 @@ export async function deobfuscate(
   warnings.push(...preludeResult.errors);
 
   // Step 3: Build pipeline with default or custom passes
-  // Note: Only use string-based passes (not AST passes like cleanup/inlining)
+  // The default pass ordering is critical for correct deobfuscation:
+  // 1. String array (must run first to resolve string references)
+  // 2. Protection removal (self-defending, debug protection, console, domain lock)
+  // 3. Core transforms (dead code, control flow, object keys)
+  // 4. String/number transforms (split strings, unicode escape, numbers)
+  // 5. Propagation passes (string replacement, constant propagation)
+  // 6. Cleanup passes (boolean literals)
+  // 7. Unminify (always last — produces readable output)
   const passes: Pass[] = options.customPasses ?? [
+    stringArrayPass,
+    selfDefendingPass,
+    debugProtectionPass,
+    consoleOutputPass,
+    domainLockPass,
+    deadCodeRemovalPass,
+    controlFlowFlatteningPass,
+    objectKeysPass,
+    splitStringsPass,
+    unicodeEscapePass,
+    numbersToExpressionsPass,
     stringReplacementPass,
     constantPropagationPass,
+    booleanLiteralsPass,
+    unminifyPass,
   ];
 
   // Create a modified pipeline that injects the recovered strings into context

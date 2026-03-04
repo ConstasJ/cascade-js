@@ -29,6 +29,19 @@ export { cleanupPass } from './passes/cleanup.js';
 export { booleanLiteralsPass } from './transform/extensions/boolean-literals.js';
 export { controlFlowFlatteningPass } from './transform/extensions/control-flow-flattening.js';
 export { deadCodeRemovalPass } from './transform/extensions/dead-code-removal.js';
+export { splitStringsPass } from './transform/extensions/split-strings.js';
+export { unicodeEscapePass } from './transform/extensions/unicode-escape.js';
+export { numbersToExpressionsPass } from './transform/extensions/numbers-to-expressions.js';
+export { objectKeysPass } from './transform/extensions/object-keys.js';
+export { selfDefendingPass } from './transform/extensions/self-defending.js';
+export { debugProtectionPass } from './transform/extensions/debug-protection.js';
+export { consoleOutputPass } from './transform/extensions/console-output.js';
+export { domainLockPass } from './transform/extensions/domain-lock.js';
+export { unminifyPass } from './transform/extensions/unminify.js';
+
+// String array AST detection pass (pure pattern matching, no LLM)
+export { stringArrayPass } from './passes/extensions/string-array.js';
+export type { StringArrayDetection, DecoderDetection, RotateDetection, WrapperDetection } from './passes/extensions/string-array.js';
 
 // LLM adapters
 export {
