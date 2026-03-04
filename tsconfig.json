@@ -47,6 +47,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "tests",
     "tsup.config.ts",
     "vitest.config.ts"
   ]
