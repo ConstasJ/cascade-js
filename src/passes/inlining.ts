@@ -187,7 +187,7 @@ export const inliningPass: ASTPass = {
       CallExpression(path: any) {
         const { callee } = path.node;
         if (t.isIdentifier(callee) && functions.has(callee.name)) {
-          const calls = callSites.get(callee.name) || [];
+          const calls = callSites.get(callee.name) ?? [];
           calls.push(path);
           callSites.set(callee.name, calls);
           
@@ -199,7 +199,7 @@ export const inliningPass: ASTPass = {
 
     // Third pass: inline eligible functions
     for (const [name, info] of functions) {
-      const calls = callSites.get(name) || [];
+      const calls = callSites.get(name) ?? [];
       
       // Inline if:
       // 1. Only called once

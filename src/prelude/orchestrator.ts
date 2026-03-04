@@ -43,7 +43,7 @@ export class PreludeOrchestrator {
   
   constructor(options: PreludeOrchestratorOptions = {}) {
     this.options = {
-      llmAdapter: options.llmAdapter || new MockLLMAdapter(),
+      llmAdapter: options.llmAdapter ?? new MockLLMAdapter(),
       timeout: options.timeout ?? 5000,
     };
   }

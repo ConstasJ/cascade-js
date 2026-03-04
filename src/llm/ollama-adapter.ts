@@ -25,7 +25,7 @@ export class OllamaLLMAdapter extends BaseLLMAdapter {
     options?: LLMOptions
   ): Promise<PreludeDetectionResult> {
     const prompt = this.buildPrompt(statements);
-    const modelToUse = options?.model || this.model;
+    const modelToUse = options?.model ?? this.model;
     
     const response = await this.client.generate({
       model: modelToUse,

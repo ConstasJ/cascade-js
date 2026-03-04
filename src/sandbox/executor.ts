@@ -4,9 +4,7 @@ import type { SandboxResult, SandboxOptions } from '../types.js';
 let quickjsInstance: QuickJSWASMModule | null = null;
 
 async function getQuickJSInstance(): Promise<QuickJSWASMModule> {
-  if (!quickjsInstance) {
-    quickjsInstance = await getQuickJS();
-  }
+  quickjsInstance ??= await getQuickJS();
   return quickjsInstance;
 }
 
@@ -109,7 +107,7 @@ export async function extractStringsFromPrelude(
   if (!result.success) {
     return {
       strings: new Map(),
-      errors: [result.error || 'Unknown error'],
+      errors: [result.error ?? 'Unknown error'],
     };
   }
 

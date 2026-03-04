@@ -115,9 +115,9 @@ function printStats(
   const lines: string[] = [];
   lines.push('');
   lines.push('━━━ CASCADE Deobfuscation Statistics ━━━');
-  lines.push(`Recovered Literals: ${stats.recoveredLiterals || 0}`);
+  lines.push(`Recovered Literals: ${stats.recoveredLiterals ?? 0}`);
   lines.push(`Prelude Detected: ${stats.preludeDetected ? 'Yes' : 'No'}`);
-  lines.push(`Passes Applied: ${(stats.passesApplied || []).join(', ') || 'None'}`);
+  lines.push(`Passes Applied: ${(stats.passesApplied ?? []).join(', ') ?? 'None'}`);
 
   if (verbose && stats.timingMs) {
     lines.push('');
@@ -137,6 +137,7 @@ function printStats(
 /**
  * Main CLI function
  */
+// eslint-disable-next-line @typescript-eslint/require-await
 async function main(): Promise<void> {
   const program = new Command();
 
@@ -165,7 +166,7 @@ async function main(): Promise<void> {
     .action(async (input: string | undefined, output: string | undefined, options: CLIOptions) => {
       try {
         // Get API key from option or environment variable
-        const apiKey = options.apiKey || process.env.CASCADE_API_KEY;
+        const apiKey = options.apiKey ?? process.env.CASCADE_API_KEY;
         if (!apiKey && options.provider !== 'ollama') {
           throw new Error(
             `API key required. Set --api-key or CASCADE_API_KEY environment variable`
@@ -186,7 +187,7 @@ async function main(): Promise<void> {
         const inputCode = await readInput(input);
 
         // Create adapter
-        const adapter = createAdapter(options.provider, options.model, apiKey || '', options.baseUrl);
+        const adapter = createAdapter(options.provider, options.model, apiKey ?? '', options.baseUrl);
 
         // Prepare deobfuscate options
         const deobfuscateOptions: DeobfuscateOptions = {

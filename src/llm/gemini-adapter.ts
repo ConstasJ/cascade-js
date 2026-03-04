@@ -27,7 +27,7 @@ export class GeminiLLMAdapter extends BaseLLMAdapter {
     options?: LLMOptions
   ): Promise<PreludeDetectionResult> {
     const prompt = this.buildPrompt(statements);
-    const modelToUse = options?.model || this.model;
+    const modelToUse = options?.model ?? this.model;
     
     const requestOptions = this.baseUrl ? { baseUrl: this.baseUrl } : {};
     const generativeModel = this.client.getGenerativeModel({ model: modelToUse }, requestOptions);
@@ -60,9 +60,9 @@ export class GeminiLLMAdapter extends BaseLLMAdapter {
     }
     
     // Extract JSON from response (Gemini may wrap in markdown)
-    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || 
+    const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) ?? 
                       content.match(/\{[\s\S]*\}/);
-    const jsonStr = jsonMatch ? jsonMatch[1] || jsonMatch[0] : content;
+    const jsonStr = jsonMatch ? jsonMatch[1] ?? jsonMatch[0] : content;
     
     const parsed = JSON.parse(jsonStr);
     const validated = ResponseSchema.parse(parsed);
