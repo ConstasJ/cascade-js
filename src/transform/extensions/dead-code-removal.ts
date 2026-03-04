@@ -15,6 +15,7 @@ import type { PipelineContext } from '../../pipeline/pipeline.js';
 export const deadCodeRemovalPass = definePass({
   name: 'dead-code-removal',
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async transform(code: string, _context: PipelineContext) {
     // Log warning that this is not yet implemented
     console.warn('[STUB] dead-code-removal not yet implemented');

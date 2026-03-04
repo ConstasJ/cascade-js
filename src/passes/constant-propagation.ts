@@ -17,6 +17,7 @@ interface ConstantValue {
 export const constantPropagationPass = definePass({
   name: 'constant-propagation',
   
+  // eslint-disable-next-line @typescript-eslint/require-await
   async transform(code: string, context: PipelineContext) {
     const constants = new Map<string, ConstantValue>();
     const reassigned = new Set<string>();
@@ -84,10 +85,8 @@ export const constantPropagationPass = definePass({
 
     // Store stats in shared context if available
     if (constants.size > 0 && context.shared) {
-      context.shared.recoveredLiterals = (context.shared.recoveredLiterals || 0) + constants.size;
-      if (!context.shared.passesApplied) {
-        context.shared.passesApplied = [];
-      }
+      context.shared.recoveredLiterals = (context.shared.recoveredLiterals ?? 0) + constants.size;
+      context.shared.passesApplied ??= [];
       context.shared.passesApplied.push('constant-propagation');
     }
 

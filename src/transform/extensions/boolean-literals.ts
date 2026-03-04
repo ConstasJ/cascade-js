@@ -22,6 +22,7 @@ const generate = typeof generateDefault === 'function' ? generateDefault : (gene
 export const booleanLiteralsPass = definePass({
   name: 'boolean-literals',
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async transform(code: string, context: PipelineContext) {
     // Parse code to AST
     const ast = parse(code, { sourceType: 'script' });
@@ -79,9 +80,7 @@ export const booleanLiteralsPass = definePass({
 
     // Track that this pass was applied
     if (context.shared) {
-      if (!context.shared.passesApplied) {
-        context.shared.passesApplied = [];
-      }
+      context.shared.passesApplied ??= [];
       context.shared.passesApplied.push('boolean-literals');
     }
 

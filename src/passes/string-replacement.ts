@@ -22,6 +22,7 @@ export const stringReplacementPass = definePass({
   name: 'string-replacement',
   dependencies: ['constant-propagation'],
   
+  // eslint-disable-next-line @typescript-eslint/require-await
   async transform(code: string, context: PipelineContext) {
     // Get recovered strings from context
     const recoveredStrings = context.shared.recoveredStrings as Map<number, string> | undefined;

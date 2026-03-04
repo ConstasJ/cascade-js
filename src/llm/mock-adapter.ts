@@ -4,7 +4,7 @@ import type { TaggedStatement, PreludeDetectionResult, LLMOptions } from '../typ
 export class MockLLMAdapter extends BaseLLMAdapter {
   readonly name = 'mock';
 
-  async detectPrelude(
+  detectPrelude(
     statements: TaggedStatement[],
     _options?: LLMOptions
   ): Promise<PreludeDetectionResult> {
@@ -34,11 +34,11 @@ export class MockLLMAdapter extends BaseLLMAdapter {
       }
     }
 
-    return {
+    return Promise.resolve({
       stringArrayId,
       stringFetcherId,
       rotateId,
       raw: { detectedBy: 'mock-heuristic' },
-    };
+    });
   }
 }
