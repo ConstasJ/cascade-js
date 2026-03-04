@@ -1,6 +1,6 @@
 import traverseDefault from '@babel/traverse';
 import * as t from '@babel/types';
-import type { Pass, PipelineContext } from '../types.js';
+import type { ASTPass, PipelineContext } from '../types.js';
 
 const traverse = typeof traverseDefault === 'function' ? traverseDefault : (traverseDefault as any).default;
 
@@ -98,7 +98,7 @@ function isFunctionBodyPure(body: t.BlockStatement | t.Expression): boolean {
   return false;
 }
 
-export const inliningPass: Pass = {
+export const inliningPass: ASTPass = {
   name: 'inlining',
   dependencies: ['constant-propagation'],
   transform(ast, context: PipelineContext) {

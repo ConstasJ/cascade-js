@@ -1,6 +1,6 @@
-import type { Pass, PipelineContext } from '../../types.js';
+import type { ASTPass, PipelineContext } from '../../types.js';
 
-export const deadCodePass: Pass = {
+export const deadCodePass: ASTPass = {
   name: 'dead-code',
   
   transform(ast, context: PipelineContext) {

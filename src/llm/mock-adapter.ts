@@ -23,8 +23,8 @@ export class MockLLMAdapter extends BaseLLMAdapter {
     for (const stmt of statements) {
       const code = stmt.code.toLowerCase();
 
-      // Detect string array: var _0x... = [...]
-      if (/var\s+_0x\w+\s*=\s*\[/.test(stmt.code)) {
+      // Detect string array: var _0x... = [...] (first match only)
+      if (stringArrayId === null && /var\s+_0x\w+\s*=\s*\[/.test(stmt.code)) {
         stringArrayId = stmt.id;
       }
 

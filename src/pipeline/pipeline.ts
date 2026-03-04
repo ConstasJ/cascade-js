@@ -3,6 +3,11 @@
  */
 
 import type { Pass } from './pass.js';
+import type { LLMAdapter } from '../types.js';
+import { detectObfuscation } from '../prefilter/detector.js';
+import { PreludeOrchestrator } from '../prelude/orchestrator.js';
+import { stringReplacementPass } from '../passes/string-replacement.js';
+import { constantPropagationPass } from '../passes/constant-propagation.js';
 
 /**
  * Context shared across all passes in a pipeline execution
@@ -200,3 +205,131 @@ function topologicalSort(passes: Pass[]): Pass[] {
 
 // Re-export types needed by pass.ts
 export type { Pass };
+
+/**
+ * Options for deobfuscate convenience function
+ */
+export interface DeobfuscateOptions {
+  /** LLM adapter to use for prelude detection */
+  llmAdapter?: LLMAdapter;
+  /** Global timeout in milliseconds for entire pipeline (default: 60000) */
+  timeout?: number;
+  /** Custom passes to use instead of default passes */
+  customPasses?: Pass[];
+  /** Skip prefilter detection (force deobfuscation) */
+  skipPrefilter?: boolean;
+}
+
+/**
+ * Convenience function that wires all components together for full CASCADE deobfuscation
+ * 
+ * @param code - Obfuscated JavaScript code
+ * @param options - Configuration options
+ * @returns Deobfuscated code with metadata
+ */
+export async function deobfuscate(
+  code: string,
+  options: DeobfuscateOptions = {}
+): Promise<CascadeResult> {
+  const timeout = options.timeout ?? 60000;
+  const warnings: string[] = [];
+
+  // Step 1: Pre-filter detection (skip if requested)
+  if (!options.skipPrefilter) {
+    const detection = detectObfuscation(code);
+    if (!detection.detected) {
+      warnings.push(
+        `Low obfuscation confidence (${(detection.confidence * 100).toFixed(1)}%). Code may not be obfuscated.`
+      );
+    }
+  }
+
+  // Step 2: Prelude detection and string extraction
+  const orchestratorOptions = options.llmAdapter 
+    ? { llmAdapter: options.llmAdapter, timeout: Math.floor(timeout * 0.2) }
+    : { timeout: Math.floor(timeout * 0.2) };
+  
+  const orchestrator = new PreludeOrchestrator(orchestratorOptions);
+
+  const preludeResult = await orchestrator.detectAndExtract(code);
+  warnings.push(...preludeResult.errors);
+
+  // Step 3: Build pipeline with default or custom passes
+  // Note: Only use string-based passes (not AST passes like cleanup/inlining)
+  const passes: Pass[] = options.customPasses ?? [
+    stringReplacementPass,
+    constantPropagationPass,
+  ];
+
+  // Create a modified pipeline that injects the recovered strings into context
+  const pipeline: Pipeline = {
+    async run(inputCode: string): Promise<CascadeResult> {
+      const startTime = Date.now();
+      const pipelineWarnings: string[] = [];
+      let currentCode = inputCode;
+
+      // Create shared context with recovered strings
+      const context: PipelineContext = {
+        shared: {
+          recoveredStrings: preludeResult.strings,
+        },
+      };
+
+      // Sort passes in dependency order
+      const sortedPasses = topologicalSort(passes);
+
+      // Run with timeout
+      const timeoutPromise = new Promise<CascadeResult>((resolve) => {
+        setTimeout(() => {
+          resolve({
+            code: inputCode,
+            warnings: ['Pipeline execution timeout exceeded'],
+            stats: {
+              passesRun: 0,
+              timeMs: timeout,
+            },
+          });
+        }, Math.floor(timeout * 0.8));
+      });
+
+      const executionPromise = (async (): Promise<CascadeResult> => {
+        let passesRun = 0;
+
+        for (const pass of sortedPasses) {
+          try {
+            currentCode = await pass.transform(currentCode, context);
+            passesRun++;
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
+            pipelineWarnings.push(
+              `Pass '${pass.name}' failed: ${errorMessage}`
+            );
+          }
+        }
+
+        const endTime = Date.now();
+        return {
+          code: currentCode,
+          warnings: pipelineWarnings,
+          stats: {
+            passesRun,
+            timeMs: endTime - startTime,
+          },
+        };
+      })();
+
+      // Race between timeout and execution
+      return Promise.race([timeoutPromise, executionPromise]);
+    },
+  };
+
+  // Step 4: Run pipeline
+  const result = await pipeline.run(code);
+
+  // Merge warnings
+  return {
+    ...result,
+    warnings: [...warnings, ...result.warnings],
+  };
+}

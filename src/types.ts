@@ -8,7 +8,6 @@ import * as babel from '@babel/types';
 export interface CascadeOptions {
   llmAdapter?: LLMAdapter;
   timeout?: number;
-  passes?: Pass[];
   debug?: boolean;
   sandbox?: SandboxOptions;
 }
@@ -78,11 +77,14 @@ export interface LLMOptions {
   model?: string;
 }
 
-export interface Pass {
+// AST-based pass interface (for passes that work directly with Babel AST)
+// Note: Most passes now use string-based transformation from pipeline/pass.ts
+export interface ASTPass {
   name: string;
   dependencies?: string[];
   transform(ast: babel.File, context: PipelineContext): babel.File | Promise<babel.File>;
 }
+
 
 export interface PipelineContext {
   options: CascadeOptions;

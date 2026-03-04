@@ -79,7 +79,7 @@ export class PreludeOrchestrator {
         const match = stringArrayStmt.code.match(/var\s+(_0x\w+)\s*=/);
         
         if (match) {
-          const arrayName = match[1];
+          const arrayName = match[1]!;
           
           // Build prelude code (string array + rotate + fetcher)
           const preludeStatements = statements.filter(s => 

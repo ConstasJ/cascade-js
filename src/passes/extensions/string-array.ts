@@ -1,6 +1,6 @@
-import type { Pass, PipelineContext } from '../../types.js';
+import type { ASTPass, PipelineContext } from '../../types.js';
 
-export const stringArrayPass: Pass = {
+export const stringArrayPass: ASTPass = {
   name: 'string-array',
   
   transform(ast, context: PipelineContext) {

@@ -1,6 +1,6 @@
-import type { Pass, PipelineContext } from '../../types.js';
+import type { ASTPass, PipelineContext } from '../../types.js';
 
-export const rotatePass: Pass = {
+export const rotatePass: ASTPass = {
   name: 'rotate',
   
   transform(ast, context: PipelineContext) {

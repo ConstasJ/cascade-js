@@ -1,12 +1,12 @@
 import traverseDefault from '@babel/traverse';
 import * as t from '@babel/types';
-import type { Pass, PipelineContext } from '../types.js';
+import type { ASTPass, PipelineContext } from '../types.js';
 
 
 
 const traverse = typeof traverseDefault === 'function' ? traverseDefault : (traverseDefault as any).default;
 
-export const cleanupPass: Pass = {
+export const cleanupPass: ASTPass = {
   name: 'cleanup',
   dependencies: ['string-replacement', 'inlining'],
   
